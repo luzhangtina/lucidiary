@@ -40,11 +40,6 @@ jobs:
         git fetch origin gh-pages || echo "No gh-pages branch yet"
         git checkout gh-pages || git checkout --orphan gh-pages
         git reset --hard origin/gh-pages || echo "No existing history"
-    
-    - name: Fix potential worktree issues
-      run: |
-        git worktree prune
-        git worktree add --force github-pages-deploy-action-temp-deployment-folder gh-pages
 
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@v4
