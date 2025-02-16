@@ -32,12 +32,12 @@ jobs:
       run: |
         npm run build
 
-        - name: Set up Git for gh-pages deployment
-        run: |
-          git fetch origin gh-pages || echo "No gh-pages branch yet"
-          git checkout gh-pages || git checkout --orphan gh-pages
-          git rm -rf . || echo "No files to remove"
-          git commit --allow-empty -m "Initial commit on gh-pages" || echo "No changes to commit"  
+    - name: Set up Git for gh-pages deployment
+      run: |
+        git fetch origin gh-pages || echo "No gh-pages branch yet"
+        git checkout gh-pages || git checkout --orphan gh-pages
+        git rm -rf . || echo "No files to remove"
+        git commit --allow-empty -m "Initial commit on gh-pages" || echo "No changes to commit"  
       
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@v4
