@@ -32,16 +32,18 @@ jobs:
       run: |
         npm run build
 
-    - name: Remove previous worktrees
-      run: git worktree prune
-
-    - name: Delete old deployment folder
-      run: rm -rf github-pages-deploy-action-temp-deployment-folder || true
-
-    - name: Set up Git for gh-pages deployment
+    - name: Clean up existing worktrees
+      run: |
+        git worktree prune || true
+        git worktree list | awk '{print $1}' | xargs -I{} git worktree remove --force {}
+      
+    - name: Fetch the latest gh-pages
       run: |
         git fetch origin gh-pages || echo "No gh-pages branch yet"
-        git checkout gh-pages || git checkout --orphan gh-pages
+    
+    - name: Checkout gh-pages branch
+      run: |
+        git checkout --orphan gh-pages || git checkout gh-pages
         git reset --hard origin/gh-pages || echo "No existing history"
 
     - name: Deploy to GitHub Pages
