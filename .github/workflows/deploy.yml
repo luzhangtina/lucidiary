@@ -32,7 +32,10 @@ jobs:
       run: |
         npm run build
 
-    - name: Remove old deployment folder
+    - name: Remove previous worktrees
+      run: git worktree prune
+
+    - name: Delete old deployment folder
       run: rm -rf github-pages-deploy-action-temp-deployment-folder || true
 
     - name: Set up Git for gh-pages deployment
