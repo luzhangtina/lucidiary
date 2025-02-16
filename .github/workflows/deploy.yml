@@ -1,4 +1,4 @@
-name: Deploy Astro Site
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -6,8 +6,9 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -18,20 +19,27 @@ jobs:
           node-version: 20
           cache: npm
 
-      - name: Clean npm cache (fix Rollup issue)
-        run: npm cache clean --force
-
-      - name: Delete node_modules and package-lock.json
-        run: rm -rf node_modules package-lock.json
-
-      - name: Install dependencies again
-        run: npm install
+      - name: Clean and install dependencies
+        run: |
+          rm -rf node_modules package-lock.json
+          npm install
 
       - name: Build Astro site
         run: npm run build
+
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Force clean gh-pages branch
+        run: |
+          git fetch origin gh-pages || echo "No gh-pages branch yet"
+          git branch -D gh-pages || echo "No local gh-pages branch"
+          git checkout --orphan gh-pages
+          git reset --hard
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
           folder: dist
+          clean: true  # Ensures old files are removed
