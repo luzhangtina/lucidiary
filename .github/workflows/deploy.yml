@@ -31,11 +31,6 @@ jobs:
     - name: Build the site
       run: |
         npm run build
-
-    - name: Clean up existing worktrees
-      run: |
-        git worktree prune || true
-        git worktree list | awk '{print $1}' | xargs -I{} git worktree remove --force {}
       
     - name: Fetch the latest gh-pages
       run: |
