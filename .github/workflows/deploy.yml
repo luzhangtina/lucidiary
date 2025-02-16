@@ -32,18 +32,13 @@ jobs:
       run: |
         npm run build
       
-    - name: Fetch the latest gh-pages
-      run: |
-        git fetch origin gh-pages || echo "No gh-pages branch yet"
-    
-    - name: Checkout gh-pages branch
-      run: |
-        git checkout --orphan gh-pages || git checkout gh-pages
-        git reset --hard origin/gh-pages || echo "No existing history"
-
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@v4
       with:
-        branch: gh-pages
-        folder: dist
-        token: ${{ secrets.GITHUB_TOKEN }}
+        branch: gh-pages        # Deploy to the `gh-pages` branch
+        folder: dist             # Folder containing the files to be deployed (adjust as necessary)
+        token: ${{ secrets.GITHUB_TOKEN }}  # Automatically handled by GitHub Actions, no need to set manually
+
+    - name: Clean up
+      run: |
+        git worktree prune || true
