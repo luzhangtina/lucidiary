@@ -6,40 +6,40 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout the code
+      uses: actions/checkout@v2
 
-      - name: Use Node.js 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
+    - name: Set up Node.js 20
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20'
 
-      - name: Clean and install dependencies
-        run: |
-          rm -rf node_modules package-lock.json
-          npm install
+    - name: Clean npm cache and delete node_modules and package-lock.json
+      run: |
+        rm -rf node_modules
+        rm -f package-lock.json
+        npm cache clean --force
 
-      - name: Build Astro site
-        run: npm run build
+    - name: Install dependencies
+      run: |
+        npm install
 
-      - name: Setup GitHub Pages
-        uses: actions/configure-pages@v5
+    - name: Build the site
+      run: |
+        npm run build
 
-      - name: Force clean gh-pages branch
-        run: |
-          git fetch origin gh-pages || echo "No gh-pages branch yet"
-          git branch -D gh-pages || echo "No local gh-pages branch"
-          git checkout --orphan gh-pages
-          git reset --hard
+    - name: Checkout gh-pages branch
+      run: |
+        git fetch origin gh-pages
+        git checkout gh-pages || git checkout --orphan gh-pages
 
-      - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          branch: gh-pages
-          folder: dist
-          clean: true  # Ensures old files are removed
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        branch: gh-pages
+        folder: dist
+        token: ${{ secrets.GITHUB_TOKEN }}
